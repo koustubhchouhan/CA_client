@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
+import amanProfileImg from '../assets/images/aman.png';
 
 function Home() {
   const navigate = useNavigate();
@@ -78,7 +79,7 @@ function Home() {
         <div className="team-container">
           <div className="profile-card">
             <div className="profile-image">
-              <img src="./src/assets/images/aman.png" alt="Aman Bansal" />
+              <img src={amanProfileImg} alt="Aman Bansal" />
             </div>
             <div className="profile-content">
               <h3>Aman Bansal</h3>
