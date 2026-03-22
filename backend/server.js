@@ -1,9 +1,6 @@
 import express from 'express';
 import mysql from 'mysql2';
 import cors from 'cors';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const app = express();
 
@@ -16,6 +13,11 @@ const db = mysql.createConnection({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
+  port: process.env.DB_PORT || 3306,
+  database: process.env.DB_NAME || undefined,
+  ssl: process.env.DB_SSL === 'true' ? {
+    rejectUnauthorized: true
+  } : undefined
   // Using environment variables explicitly keeps credentials safe from GitHub!
 });
 
