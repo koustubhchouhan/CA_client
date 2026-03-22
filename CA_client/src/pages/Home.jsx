@@ -126,7 +126,7 @@ function Home() {
               <span className="category-badge">Business Setup & Legal</span>
             </div>
             <div className="insight-content">
-              <h3>Top Tax-Saving Strategies for Small Businesses in 2025</h3>
+              <h3>Top Tax-Saving Strategies for Small Businesses in 2026</h3>
               <a href="#read-more" className="read-more">
                 READ MORE 
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -143,7 +143,7 @@ function Home() {
               <span className="category-badge">Career & Professional Guidance</span>
             </div>
             <div className="insight-content">
-              <h3>CA vs. CMA: What's the Difference and Who Do You Need in 2025?</h3>
+              <h3>CA vs. CMA: What's the Difference and Who Do You Need in 2026?</h3>
               <a href="#read-more" className="read-more">
                 READ MORE 
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">

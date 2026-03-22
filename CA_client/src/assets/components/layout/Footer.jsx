@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Footer.css';
 
 function Footer() {
   const currentYear = new Date().getFullYear();
+  const navigate = useNavigate();
 
   return (
     <footer className="footer">
@@ -38,11 +40,10 @@ function Footer() {
         <div className="footer-section">
           <h3>Quick Links</h3>
           <ul className="footer-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About Us</a></li>
-            <li><a href="#services">Our Services</a></li>
-            <li><a href="#insights">Insights & Articles</a></li>
-            <li><a href="#contact">Contact Us</a></li>
+            <li><a onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>Home</a></li>
+            <li><a onClick={() => navigate('/about')} style={{ cursor: 'pointer' }}>About Us</a></li>
+            <li><a onClick={() => navigate('/services')} style={{ cursor: 'pointer' }}>Our Services</a></li>
+            <li><a onClick={() => navigate('/Contact')} style={{ cursor: 'pointer' }}>Contact Us</a></li>
           </ul>
         </div>
 

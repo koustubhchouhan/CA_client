@@ -1,7 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Contact.css';
 
 function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    service: '',
+    message: ''
+  });
+  const [statusMsg, setStatusMsg] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setStatusMsg('Sending...');
+
+    try {
+      const response = await fetch('http://localhost:5000/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        setStatusMsg('Message sent successfully!');
+        setFormData({ name: '', email: '', service: '', message: '' });
+      } else {
+        const data = await response.json();
+        setStatusMsg(data.error || 'Failed to send message.');
+      }
+    } catch (error) {
+      setStatusMsg('Connection error. Make sure the backend server is running.');
+    }
+    setIsSubmitting(false);
+  };
+
   return (
     <div className="contact-page-wrapper">
       <section className="contact-hero-section">
@@ -80,28 +118,31 @@ function Contact() {
             <h3>Send Us Message</h3>
             <p className="form-subtitle">we're here to help!</p>
             
-            <form onSubmit={(e) => e.preventDefault()}>
+            <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="name">Name</label>
-                <input type="text" id="name" placeholder="Name" required />
+                <input type="text" id="name" value={formData.name} onChange={handleChange} placeholder="Name" required />
               </div>
               
               <div className="form-group">
                 <label htmlFor="email">Email</label>
-                <input type="email" id="email" placeholder="Email" required />
+                <input type="email" id="email" value={formData.email} onChange={handleChange} placeholder="Email" required />
               </div>
               
               <div className="form-group">
                 <label htmlFor="service">Service</label>
-                <input type="text" id="service" placeholder="Service" required />
+                <input type="text" id="service" value={formData.service} onChange={handleChange} placeholder="Service" required />
               </div>
               
               <div className="form-group">
                 <label htmlFor="message">Message</label>
-                <textarea id="message" rows="4" placeholder="Message" required></textarea>
+                <textarea id="message" rows="4" value={formData.message} onChange={handleChange} placeholder="Message" required></textarea>
               </div>
               
-              <button type="submit" className="submit-btn">SEND</button>
+              <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                {isSubmitting ? 'SENDING...' : 'SEND'}
+              </button>
+              {statusMsg && <p className="status-message" style={{ marginTop: '1rem', color: '#fbbf24', fontWeight: 'bold' }}>{statusMsg}</p>}
             </form>
           </div>
           
