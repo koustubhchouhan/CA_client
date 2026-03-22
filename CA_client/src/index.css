@@ -1,0 +1,162 @@
+body {
+  margin: 0;
+}
+
+/* Page Transitions */
+.page-transition {
+  animation: pageFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* GLOBAL DARK MODE OVERRIDES */
+body.dark-mode {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+body.dark-mode p,
+body.dark-mode span:not(.about-pill):not(.contact-pill):not(.contact-pill-small):not(.badge-team):not(.badge-company):not(.badge-testimonial):not(.stat-item h3 span):not(.about-stat-item h4 span),
+body.dark-mode li {
+  color: #cbd5e1;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode .nav-brand a {
+  color: #ffffff;
+}
+
+body.dark-mode .nav-brand span {
+  color: #fbbf24;
+}
+
+/* Sections Backgrounds */
+body.dark-mode .stats-section, 
+body.dark-mode .services-preview, 
+body.dark-mode .about-preview-section, 
+body.dark-mode .insights-section,
+body.dark-mode .team-section,
+body.dark-mode .services-grid-section,
+body.dark-mode .about-team-section,
+body.dark-mode .about-company-section,
+body.dark-mode .testimonials-section,
+body.dark-mode .contact-main-section {
+  background-color: #0f172a;
+}
+
+/* Cards & Elevated Elements */
+body.dark-mode .service-card,
+body.dark-mode .insight-card,
+body.dark-mode .stat-item,
+body.dark-mode .profile-card,
+body.dark-mode .mv-card,
+body.dark-mode .contact-form-card,
+body.dark-mode .team-image-wrapper {
+  background-color: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+}
+
+/* Specific Text Overrides */
+body.dark-mode .section-header h2,
+body.dark-mode .contact-value {
+  color: #ffffff;
+}
+
+body.dark-mode .section-header p,
+body.dark-mode .profile-title,
+body.dark-mode .profile-desc,
+body.dark-mode .contact-label {
+  color: #cbd5e1;
+}
+
+body.dark-mode .read-more {
+  color: #fbbf24;
+}
+
+body.dark-mode .profile-divider {
+  background-color: #334155;
+}
+
+body.dark-mode .icon-wrapper {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+}
+
+/* Navbar */
+body.dark-mode .navbar {
+  background-color: rgba(15, 23, 42, 0.95);
+  border: none;
+}
+
+body.dark-mode .navbar.scrolled {
+  border: none;
+}
+
+body.dark-mode .nav-links a:not(.cta-button) {
+  color: #cbd5e1;
+}
+
+body.dark-mode .nav-links a:not(.cta-button):hover {
+  color: #fbbf24;
+}
+
+body.dark-mode .nav-links a:not(.cta-button)::after {
+  background-color: #fbbf24;
+}
+
+body.dark-mode .mobile-menu-btn svg {
+  fill: #cbd5e1;
+}
+
+body.dark-mode .nav-links.active {
+  background-color: rgba(15, 23, 42, 0.98);
+}
+
+/* Forms */
+body.dark-mode input,
+body.dark-mode textarea {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode input:focus,
+body.dark-mode textarea:focus {
+  border-color: #fbbf24 !important;
+}
+
+/* Testimonials */
+body.dark-mode .testimonials-section {
+  border-top-color: #1e293b;
+}
+
+body.dark-mode .testimonial-author-box {
+  border-top-color: #334155;
+}
+
+/* #root {
+  width: 1126px;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+ 
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+} */
