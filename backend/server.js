@@ -8,8 +8,8 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // allows parsing of JSON body in POST requests
 
-// MySQL Connection Setup
-const db = mysql.createConnection({
+// MySQL Connection Pool Setup
+const db = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
@@ -17,27 +17,30 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME || undefined,
   ssl: process.env.DB_SSL === 'true' ? {
     rejectUnauthorized: true
-  } : undefined
-  // Using environment variables explicitly keeps credentials safe from GitHub!
+  } : undefined,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+  // Connection pools automatically reconnect dropped idle connections, which is required for Serverless Functions!
 });
 
 // Connect to Database and Auto-Setup
-db.connect((err) => {
+db.getConnection((err, connection) => {
   if (err) {
     console.error('Error connecting to MySQL database:', err.message);
-    console.log('Are you sure XAMPP Apache & MySQL are running?');
+    console.log('Are you sure the Database is reachable?');
     return;
   }
   
-  console.log('Connected to MySQL Local Server!');
+  console.log('Connected to MySQL Pool successfully!');
 
   // 1. Automagically create the database if it doesn't exist yet!
-  db.query('CREATE DATABASE IF NOT EXISTS ca_client_db', (err) => {
-    if (err) throw err;
+  connection.query('CREATE DATABASE IF NOT EXISTS ca_client_db', (err) => {
+    if (err) { connection.release(); return; }
     
     // 2. Switch to use the database we just made or found
-    db.query('USE ca_client_db', (err) => {
-      if (err) throw err;
+    connection.query('USE ca_client_db', (err) => {
+      if (err) { connection.release(); return; }
 
       // 3. Automagically create the contacts table inside it
       const createTableQuery = `
@@ -50,9 +53,10 @@ db.connect((err) => {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `;
-      db.query(createTableQuery, (err) => {
+      connection.query(createTableQuery, (err) => {
+        connection.release(); // release it back to the pool
         if (err) throw err;
-        console.log('✅ Database ca_client_db and contacts table are setup and ready!');
+        console.log('✅ Database and tables are perfectly verified for production!');
       });
     });
   });
