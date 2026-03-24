@@ -412,7 +412,7 @@
 /* Responsiveness */
 @media (max-width: 768px) {
   .hero {
-    padding: 4rem 1.5rem;
+    padding: 5rem 1.5rem 7rem 1.5rem;
   }
 
   .hero h1 {
@@ -421,5 +421,9 @@
 
   .hero p {
     font-size: 1.1rem;
+  }
+
+  .stats-section {
+    margin-top: -3rem;
   }
 }
