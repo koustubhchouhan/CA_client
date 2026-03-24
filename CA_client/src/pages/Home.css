@@ -1,5 +1,8 @@
 .home-page {
   width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .hero {
@@ -137,10 +140,22 @@
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   .stats-container {
-    grid-template-columns: 1fr;
-    padding: 2.5rem 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 1.5rem 1rem;
+    gap: 1rem;
+  }
+  .stat-item h3 {
+    font-size: 1.8rem;
+  }
+  .stat-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+  .team-section, .insights-section, .hero, .stats-section, .testimonials-section, .about-company-section {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 
@@ -311,7 +326,7 @@
 
 .insights-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
