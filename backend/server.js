@@ -31,13 +31,23 @@ db.connect((err) => {
   
   console.log('Connected to MySQL Local Server!');
 
+  // Detect active database from environment variable
+  const activeDbName = process.env.DB_NAME || 'ca_client_db';
+
   // 1. Automagically create the database if it doesn't exist yet!
-  db.query('CREATE DATABASE IF NOT EXISTS ca_client_db', (err) => {
-    if (err) throw err;
+  db.query(`CREATE DATABASE IF NOT EXISTS \`${activeDbName}\``, (err) => {
+    // Gracefully ignore creation errors on Serverless databases (like TiDB) 
+    // that don't allow users to run CREATE DATABASE manually.
+    if (err && err.code !== 'ER_DBACCESS_DENIED_ERROR' && err.code !== 'ER_ACCESS_DENIED_ERROR') {
+         console.warn('DB Setup Warning:', err.message);
+    }
     
-    // 2. Switch to use the database we just made or found
-    db.query('USE ca_client_db', (err) => {
-      if (err) throw err;
+    // 2. Switch to use the configured database
+    db.query(`USE \`${activeDbName}\``, (err) => {
+      if (err) {
+          console.error(`FATAL: Could not select database '${activeDbName}'! Error:`, err.message);
+          return;
+      }
 
       // 3. Automagically create the contacts table inside it
       const createTableQuery = `
@@ -51,8 +61,11 @@ db.connect((err) => {
         )
       `;
       db.query(createTableQuery, (err) => {
-        if (err) throw err;
-        console.log('✅ Database ca_client_db and contacts table are setup and ready!');
+        if (err) {
+            console.error('FATAL: Could not create table:', err.message);
+            return;
+        }
+        console.log(`✅ Database ${activeDbName} and contacts table are setup and ready!`);
       });
     });
   });
