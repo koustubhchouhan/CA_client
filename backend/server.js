@@ -8,8 +8,8 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // allows parsing of JSON body in POST requests
 
-// MySQL Connection Setup
-const db = mysql.createConnection({
+// MySQL Connection Pool Setup (Crucial for Vercel Serverless Reliability)
+const db = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
@@ -17,56 +17,46 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME || undefined,
   ssl: process.env.DB_SSL === 'true' ? {
     rejectUnauthorized: true
-  } : undefined
-  // Using environment variables explicitly keeps credentials safe from GitHub!
+  } : undefined,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-// Connect to Database and Auto-Setup
-db.connect((err) => {
+const activeDbName = process.env.DB_NAME || 'ca_client_db';
+
+// Connect to Database and Auto-Setup via a connection from the pool
+db.getConnection((err, connection) => {
   if (err) {
-    console.error('Error connecting to MySQL database:', err.message);
-    console.log('Are you sure XAMPP Apache & MySQL are running?');
+    console.error('Error connecting to MySQL database pool:', err.message);
     return;
   }
-  
-  console.log('Connected to MySQL Local Server!');
-
-  // Detect active database from environment variable
-  const activeDbName = process.env.DB_NAME || 'ca_client_db';
+  console.log('Connected to MySQL Pool successfully!');
 
   // 1. Automagically create the database if it doesn't exist yet!
-  db.query(`CREATE DATABASE IF NOT EXISTS \`${activeDbName}\``, (err) => {
-    // Gracefully ignore creation errors on Serverless databases (like TiDB) 
-    // that don't allow users to run CREATE DATABASE manually.
+  connection.query(`CREATE DATABASE IF NOT EXISTS \`${activeDbName}\``, (err) => {
     if (err && err.code !== 'ER_DBACCESS_DENIED_ERROR' && err.code !== 'ER_ACCESS_DENIED_ERROR') {
          console.warn('DB Setup Warning:', err.message);
     }
     
-    // 2. Switch to use the configured database
-    db.query(`USE \`${activeDbName}\``, (err) => {
+    // 2. Automagically create the contacts table directly indicating the DB
+    const createTableQuery = `
+      CREATE TABLE IF NOT EXISTS \`${activeDbName}\`.contacts (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL,
+          service VARCHAR(255),
+          message TEXT NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    connection.query(createTableQuery, (err) => {
       if (err) {
-          console.error(`FATAL: Could not select database '${activeDbName}'! Error:`, err.message);
-          return;
+          console.error('FATAL: Could not create table:', err.message);
+      } else {
+          console.log(`✅ Database ${activeDbName} and contacts table validated!`);
       }
-
-      // 3. Automagically create the contacts table inside it
-      const createTableQuery = `
-        CREATE TABLE IF NOT EXISTS contacts (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            email VARCHAR(255) NOT NULL,
-            service VARCHAR(255),
-            message TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-      `;
-      db.query(createTableQuery, (err) => {
-        if (err) {
-            console.error('FATAL: Could not create table:', err.message);
-            return;
-        }
-        console.log(`✅ Database ${activeDbName} and contacts table are setup and ready!`);
-      });
+      connection.release(); // ALWAYS release the connection back to the pool in serverless
     });
   });
 });
@@ -75,13 +65,14 @@ db.connect((err) => {
 app.post('/api/contact', (req, res) => {
   const { name, email, service, message } = req.body;
 
-  // Basic validation
   if (!name || !email || !message) {
     return res.status(400).json({ error: 'Name, email, and message are required fields.' });
   }
-
-  const query = 'INSERT INTO contacts (name, email, service, message) VALUES (?, ?, ?, ?)';
   
+  // Using template literal to explicitly target the database table to fix Vercel "No DB Selected" async issues
+  const query = `INSERT INTO \`${activeDbName}\`.contacts (name, email, service, message) VALUES (?, ?, ?, ?)`;
+  
+  // The pool automatically grabs a free connection, executes, and releases it!
   db.query(query, [name, email, service, message], (err, result) => {
     if (err) {
       console.error('Failed to insert contact form data:', err);
