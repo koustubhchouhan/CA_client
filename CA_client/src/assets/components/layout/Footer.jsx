@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Footer.css';
+import Logo from './Logo';
 
 function Footer() {
   const currentYear = new Date().getFullYear();
@@ -12,8 +13,8 @@ function Footer() {
         
         {/* Brand Section */}
         <div className="footer-brand">
-          <h2>CA<span></span></h2>
-          <p>
+          <Logo isFooter={true} />
+          <p style={{ marginTop: '1.5rem' }}>
             Your trusted partner in finance, taxation, and business excellence. 
             Delivering strategic solutions for startups and enterprises with integrity and expertise.
           </p>

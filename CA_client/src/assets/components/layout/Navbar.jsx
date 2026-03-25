@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Navbar.css';
+import Logo from './Logo';
 
 function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -48,7 +49,9 @@ function Navbar() {
   return (
     <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
       <div className="nav-brand">
-        <a onClick={() => handleNavigation('/')} style={{cursor: 'pointer'}}>CA<span></span></a>
+        <a onClick={() => handleNavigation('/')} style={{cursor: 'pointer', display: 'flex', textDecoration: 'none'}}>
+          <Logo />
+        </a>
       </div>
 
       <button className="mobile-menu-btn" onClick={toggleMobileMenu} aria-label="Toggle menu">
